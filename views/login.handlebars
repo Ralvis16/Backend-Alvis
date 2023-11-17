@@ -13,17 +13,11 @@
     </div>
     <button type="submit">Login</button>
   </form>
-  <form action="/api/sessions/github" method="get">
-    <button type="submit">Login con GitHub</button>
-  </form>
 
   {{! Si hay un error en el login mostramos el mensaje que nos envía el servidor }}
   {{#if error}}
     <p>{{error}}</p>
   {{/if}}
-
-  <p>Restaurar contraseña <span><a href="/resetpassword">aquí</a></span></p>
-  
 
   <p>¿No tienes cuenta?</p>
   <a href="/register">Regístrate</a>

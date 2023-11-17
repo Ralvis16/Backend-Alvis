@@ -9,14 +9,6 @@ const userSchema = new Schema({
   },
   age: Number,
   password: String,
-  cart: {
-    type: Schema.Types.ObjectId,
-    ref: "cart",
-  },
-  role: {
-    type: String,
-    default: "user",
-  }
 });
 
 const userModel = model("user", userSchema);

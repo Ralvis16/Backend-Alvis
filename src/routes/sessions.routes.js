@@ -1,25 +1,43 @@
 import { Router } from "express";
-import passport from "passport";
+import { userManager } from "../dao/managers/mongoDBManagers/user.manager.js";
 
 const routerSessions = Router();
 
-routerSessions.post("/login", passport.authenticate("login", { failureRedirect: "faillogin" }), async (req, res) => {
-  if (!req.user) return res.status(400).send({ status: "error", message: "Error credenciales inválidas" });
-  const { first_name, last_name, age, email, role } = req.user;
+routerSessions.post("/login", async (req, res) => {
+  const { email, password } = req.body;
 
-  req.session.user = {
-    first_name,
-    last_name,
-    age,
-    email,
-    role,
-  };
-
-  res.send({ status: "success", payload: req.user });
-});
-
-routerSessions.get("/faillogin", (req, res) => {
-  res.send({ error: "Error credenciales inválidas" });
+  try {
+    // Verificamos los datos ingresados
+    const user = await userManager.getUserByEmail(email);
+    if (!user || user.password !== password) {
+      return res.status(404).json({ error: "Usuario o contraseña incorrectos" });
+    }
+    
+    const { first_name, last_name, age, email: emailUser } = user
+    // Verificamos si el usuario es administrador le asignamos el rol de admin sino le asignamos el rol de user
+    if (email === "adminCoder@coder.com" || password === "adminCod3r123") {
+      req.session.user = {
+        first_name,
+        last_name,
+        age,
+        email: emailUser,
+        role: "admin",
+      };
+    } else {
+      req.session.user = {
+        first_name,
+        last_name,
+        age,
+        email: emailUser,
+        role: "user",
+      };
+    }
+   
+    // Devolvemos el usuario logueado
+    return res.json({ user: req.session.user });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 routerSessions.post("/logout", async (req, res) => {
@@ -37,31 +55,37 @@ routerSessions.post("/logout", async (req, res) => {
   }
 });
 
-routerSessions.post(
-  "/register",
-  passport.authenticate("register", { failureRedirect: "failregister" }),
-  async (req, res) => {
-    res.send({ status: "success", message: "Usuario registrado" });
+routerSessions.post("/register", async (req, res) => {
+  const { first_name, last_name, age, email, password } = req.body;
+  try {
+    // Verificamos si el usuario ya existe
+    const user = await userManager.getUserByEmail(email);
+    if (user) {
+      return res.status(404).json({ error: `El usuario con el mail ${email} ya existe` });
+    }
+
+    // Verificamos que ingreso todos los datos
+    if (!first_name || !last_name || !age || !email || !password) {
+      return res.status(404).json({ error: "Debe ingresar todos los datos" });
+    }
+
+
+    // Creamos el usuario
+    const newUser = await userManager.createUser({
+      first_name,
+      last_name,
+      email,
+      age,
+      password,
+    });
+
+    // Devolvemos el usuario creado
+    return res.json({ user: newUser });
+  } catch (error) {
+    console.log(error);
   }
-);
 
-routerSessions.get("/failregister", (req, res) => {
-  res.status(401).send({ status: "error", message: "Error al registrar el usuario" });
-});
-
-routerSessions.get("/github", passport.authenticate("github", { scope: ["user:email"] }), async (req, res) => { });
-
-routerSessions.get("/githubcallback", passport.authenticate("github", { failureRedirect: "login" }), async (req, res) => {
-  req.session.user = req.user;
-  res.redirect("/profile");
-});
-
-routerSessions.get("/current", async (req, res) => {
-  if (req.session.user) {
-    res.send({ status: "success", payload: req.session.user });
-  } else {
-    res.send({ status: "success", payload: null });
-  }
+  
 });
 
 export { routerSessions };
