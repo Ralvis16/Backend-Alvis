@@ -3,6 +3,7 @@ import { Server } from "socket.io";
 import handlebars from "express-handlebars";
 import cookieParser from "cookie-parser";
 import session from "express-session";
+import passport from "passport";
 
 import { mongoDBConnection } from "./config/mongoDB.config.js";
 import { productManagerDB } from "./dao/managers/mongoDBManagers/product.manager.js";
@@ -11,6 +12,7 @@ import { routerProducts } from "./routes/products.routes.js";
 import { routerViews } from "./routes/views.router.js";
 import { routerSessions } from "./routes/sessions.routes.js";
 import { messageManager } from "./dao/managers/mongoDBManagers/message.manager.js";
+import { initializePassport } from "./config/passport.config.js";
 
 // Datos de configuración del servidor
 const PORT = 8080;
@@ -41,9 +43,11 @@ app.use(express.json());
 
 app.use(cookieParser(cookieSecret));
 
-app.use(
-  session({ secret: cookieSecret, resave: true, saveUninitialized: true })
-);
+app.use(session({ secret: cookieSecret, resave: true, saveUninitialized: true }));
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -52,6 +56,9 @@ app.use("/api/products", routerProducts);
 app.use("/api/carts", routerCarts);
 app.use("/api/sessions", routerSessions);
 app.use("/", routerViews);
+app.get("*", (req, res) => {
+  res.status(404).send({ error: "Página no encontrada" });
+});
 
 // Iniciamos el servidor en el puerto asignado en la constante PORT
 
