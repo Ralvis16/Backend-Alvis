@@ -1,4 +1,5 @@
 import * as cartServices from "../services/cart.services.js";
+import * as productServices from "../services/product.services.js";
 
 const getAllCarts = async (req, res) => {
   try {
@@ -38,13 +39,27 @@ const addProductToCart = async (req, res) => {
     const cart = await cartServices.getCartById(cid);
     if (!cart) return res.status(404).json({ msg: "Carrito no encontrado" });
 
-    //! Corregir cuando se creen los servicios de products
-    const product = await productManagerDB.getProductById(pid);
+    const product = await productServices.getProductById(pid);
     if (!product) return res.status(404).json({ msg: "Producto no encontrado" });
 
-    await cartServices.addProductToCart(cid, pid);
+    const response = await cartServices.addProductToCart(cid, pid);
 
-    res.status(200).json({ msg: "Producto agregado al carrito" });
+    res.status(200).json({ msg: "Producto agregado al carrito", products: response.products });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const addProductInUserCart = async (req, res) => {
+  const { pid } = req.params;
+  const { user } = req.session;
+  try {
+    const product = await productServices.getProductById(pid);
+    if (!product) return res.status(404).json({ msg: "Producto no encontrado" });
+
+    const response = await cartServices.addProductToCart(user.cart, pid);
+
+    res.status(200).json({ msg: "Producto agregado al carrito", products: response.products });
   } catch (error) {
     console.log(error);
   }
@@ -72,7 +87,7 @@ const deleteProductFromCart = async (req, res) => {
     const cart = await cartServices.getCartById(cid);
     if (!cart) return res.status(404).json({ msg: "Carrito no encontrado" });
 
-    //! const product = await productManagerDB.getProductById(pid);
+    const product = await productServices.getProductById(pid);
     if (!product) return res.status(404).json({ msg: "Producto no encontrado" });
 
     // Buscamos si existe el producto en el carrito
@@ -107,8 +122,8 @@ const updateProductsFromCart = async (req, res) => {
   const { products } = req.body;
 
   try {
-    await cartServices.updateCart(cid, products);
-    res.status(200).json({ msg: "Carrito actualizado" });
+    const response = await cartServices.updateCart(cid, products);
+    res.status(200).json({ msg: "Carrito actualizado", response });
   } catch (error) {
     console.log(error);
   }
@@ -122,7 +137,7 @@ const updateProductQuantityFromCart = async (req, res) => {
     const cart = await cartServices.getCartById(cid);
     if (!cart) return res.status(404).json({ msg: "Carrito no encontrado" });
 
-    //!const product = await productManagerDB.getProductById(pid);
+    const product = await productServices.getProductById(pid);
     if (!product) return res.status(404).json({ msg: "Producto no encontrado" });
 
     // Buscamos si existe el producto en el carrito
@@ -132,6 +147,22 @@ const updateProductQuantityFromCart = async (req, res) => {
     await cartServices.updateProductQuantity(cid, pid, parseInt(quantity));
 
     res.status(200).json({ msg: `Cantidad de productos actualizada a ${quantity}` });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const purchaseCart = async (req, res) => {
+  const { cid } = req.params;
+  const user = req.session.user;
+  try {
+    // Buscamos si existe el carrito y el producto en la base de datos
+    const cart = await cartServices.getCartById(cid);
+    if (!cart) return res.status(404).json({ msg: "Carrito no encontrado" });
+
+    const response = await cartServices.purchaseCart(cid, user);
+    
+    res.status(200).json({ msg: "Compra realizada", response });
   } catch (error) {
     console.log(error);
   }
@@ -147,4 +178,6 @@ export {
   deleteAllProductsFromCart,
   updateProductsFromCart,
   updateProductQuantityFromCart,
+  addProductInUserCart,
+  purchaseCart,
 };

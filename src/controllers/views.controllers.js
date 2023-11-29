@@ -1,6 +1,8 @@
 import * as productServices from "../services/product.services.js";
 import * as cartServices from "../services/cart.services.js";
 import * as userServices from "../services/user.services.js";
+import * as ticketService from "../services/ticket.services.js";
+import * as cartService from "../services/cart.services.js";
 import { isValidPassword } from "../utils/hashPassword.js";
 import { generateToken, verifyToken } from "../utils/jwt.js";
 
@@ -29,29 +31,8 @@ const chat = async (req, res) => {
 };
 
 const products = async (req, res) => {
-  const { limit, page, sort, category, status } = req.query;
-
   try {
-    const options = {
-      limit: limit || 10,
-      page: page || 1,
-      sort: {
-        price: sort === "asc" ? 1 : -1,
-      },
-      lean: true,
-    };
-
-    if (status != undefined) {
-      const resProducts = await productServices.getAllProducts({ status: status }, options);
-      return res.json({ resProducts });
-    }
-
-    if (category != undefined) {
-      const resProducts = await productServices.getAllProducts({ category: category }, options);
-      return res.json({ resProducts });
-    }
-
-    const resProducts = await productServices.getAllProducts({}, options);
+    const resProducts = await productServices.getAllProducts(req.query);
 
     const { totalPages, docs, hasPrevPage, hasNextPage, prevPage, nextPage } = resProducts;
     res.render("products", {
@@ -75,8 +56,6 @@ const productDetail = async (req, res) => {
   const { pid } = req.params;
   try {
     const product = await productServices.getProductById(pid);
-    console.log(product);
-
     res.render("itemDetail", product);
   } catch (error) {
     console.log(error);
@@ -112,9 +91,9 @@ const loginUser = async (req, res) => {
     if (!user || !isValidPassword(user, password))
       return res.render("login", { error: "Usuario o contraseña incorrectos" });
 
-    const { first_name, last_name, email: emailUser, role } = user;
+    const userToken = userDTO(user);
 
-    const token = generateToken({ first_name, last_name, email: emailUser, role });
+    const token = generateToken(userToken);
 
     res.cookie("token", token, { maxAge: 3600000, httpOnly: true });
 
@@ -148,7 +127,7 @@ const registerUser = async (req, res) => {
     }
 
     // Creamos el usuario
-    const newUser = await userServices.createUser({
+    await userServices.createUser({
       first_name,
       last_name,
       email,
@@ -214,6 +193,33 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const generateTicket = async (req, res) => {
+  try {
+    const user = req.user;
+    const cart = await cartService.getCartFromEmail(user.email);
+    const data = {
+      purchaser: user.email,
+      amount: cart.total,
+    };
+    const ticket = await ticketService.generateTicket(data);
+
+    // todo: redireccionar a la pagina de ticket en los views
+    res.status(201).json(ticket);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getTicketFromEmail = async (req, res) => {
+  try {
+    const user = req.user;
+    const ticket = await ticketService.getTicketFromEmail(user.email);
+    res.status(200).json(ticket);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export {
   home,
   realTimeProducts,
@@ -229,4 +235,6 @@ export {
   logoutUser,
   viewResetPassword,
   resetPassword,
+  generateTicket,
+  getTicketFromEmail,
 };
