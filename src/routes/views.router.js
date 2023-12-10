@@ -53,4 +53,3 @@ routerViews.get("/resetpassword", viewResetPassword);
 routerViews.post("/resetpassword", resetPassword);
 
 export { routerViews };
-
