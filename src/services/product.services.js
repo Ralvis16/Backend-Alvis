@@ -1,7 +1,7 @@
 import * as productDao from "../dao/mongo/product.dao.js";
 
 // Llamamos todos los productos
-const getAllProducts = async (query ={}) => {
+const getAllProducts = async (query) => {
   const { limit, page, sort, category, status } = query;
 
   const options = {
