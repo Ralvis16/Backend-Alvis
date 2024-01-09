@@ -1,17 +1,17 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
-    port: 587,
-    auth: {
-      user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_APP_PASSWORD,
-    },
-  });
+  service: "gmail",
+  port: 587,
+  auth: {
+    user: "testcoderbackend@gmail.com",
+    pass: "aqkwtsgljqfdxcno",
+  },
+});
 
 const sendTicketMail = async (ticket) => {
   let result = await transporter.sendMail({
-    from: "Tienda Coder",
+    from: "Tienda Node",
     to: ticket.purchaser,
     subject: `Ticket de compra ${ticket.code}`,
     // Mandamos los datos del ticket en el cuerpo del mail

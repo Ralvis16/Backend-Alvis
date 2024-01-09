@@ -26,6 +26,3 @@ socket.on("messages", (data) => {
     chatMessages.innerHTML = `<div class="message"><strong>Server</strong>: No hay mensajes</div>`;
   }
 });
-
-
-

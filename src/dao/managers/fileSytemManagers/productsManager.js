@@ -1,7 +1,7 @@
 /* 
 
 
-El productManager es muy importante en el proyecto ya que en el se realiza la lógica 
+El productManager es muy importante en su proyecto ya que en el se realiza la lógica 
 de la manipulación de la información que se transmiten entre cliente-servidor.
 En esta etapa es donde nosotros realizamos el CRUD (Create, Read, Update, Delete)
 Manejamos la conexión con el método de persistencia de datos, en este caso usamos File System que nos permite
