@@ -4,3 +4,9 @@ error: createHash is not defined
 error: createHash is not defined
 error: userDTO is not defined
 error: userDTO is not defined
+error: user is not defined
+error: user is not defined
+error: user is not defined
+error: Cannot read properties of null (reading '_id')
+error: user is not defined
+error: Cannot read properties of null (reading '_id')
