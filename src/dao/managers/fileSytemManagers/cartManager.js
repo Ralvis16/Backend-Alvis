@@ -1,10 +1,3 @@
-/* 
-
-En este archivo no voy repetir la explicación de la lógica utilizada que es la misma 
-del ProductManager, sino voy a detallar algunas particularidades del CartManager
-
-*/
-
 import fs from "fs";
 
 import { __dirname } from "../utils.js";

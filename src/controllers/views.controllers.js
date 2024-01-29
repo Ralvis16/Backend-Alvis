@@ -1,5 +1,4 @@
 import * as productServices from "../services/product.services.js";
-import * as cartServices from "../services/cart.services.js";
 import * as userServices from "../services/user.services.js";
 import * as ticketService from "../services/ticket.services.js";
 import * as cartService from "../services/cart.services.js";
@@ -7,10 +6,12 @@ import { createHash, isValidPassword } from "../utils/hashPassword.js";
 import { generateToken, verifyToken } from "../utils/jwt.js";
 import { logger } from "../utils/logger.js";
 import { sendLinkResetPassword } from "../utils/sendLinkPasswordMail.js";
+import { userDTO } from "../dto/user.dto.js";
 
 const home = async (req, res) => {
   try {
-    res.render("login");
+    
+    res.render("login", { user });
   } catch (error) {
     logger.error(error.message);
     res.status(500).json({ error: "Server internal error" });
@@ -70,9 +71,9 @@ const productDetail = async (req, res) => {
 };
 
 const cartDetail = async (req, res) => {
-  const { cid } = req.params;
   try {
-    const cart = await cartServices.getCartById(cid);
+    const { user } = verifyToken(req.cookies.token);
+    const cart = await cartService.getCartById(user.cart);
     if (!cart) return res.status(404).json({ msg: "Carrito no encontrado" });
 
     res.render("cart", { products: cart.products });
@@ -96,6 +97,7 @@ const loginUser = async (req, res) => {
   try {
     // Verificamos los datos ingresados
     const user = await userServices.getUserByEmail(email);
+
 
     if (!user || !isValidPassword(user, password))
       return res.render("login", { error: "Usuario o contraseña incorrectos" });
@@ -137,14 +139,19 @@ const registerUser = async (req, res) => {
       return res.render("register", { error: "Debe ingresar todos los datos" });
     }
 
-    // Creamos el usuario
-    await userServices.createUser({
+    const cart = await cartService.addCart();
+    const newUser = {
       first_name,
       last_name,
-      email,
       age,
+      email,
+      cart: cart._id,
       password: createHash(password),
-    });
+      role,
+      last_connection: new Date(),
+    };
+
+    await userServices.createUser(newUser);
 
     // Devolvemos el usuario creado
     return res.redirect("/login");
@@ -157,11 +164,12 @@ const registerUser = async (req, res) => {
 const viewProfile = async (req, res) => {
   try {
     const { user } = verifyToken(req.cookies.token);
+    const products = await productServices.getAllProducts(req.query);
 
     // Si no hay usuario logueado redireccionamos al login
     if (!user) return res.redirect("/login");
 
-    res.render("profile", { user });
+    res.render("profile", { user, products: products.docs });
   } catch (error) {
     logger.error(error.message);
     res.status(500).json({ error: "Server internal error" });
@@ -248,7 +256,6 @@ const generateTicket = async (req, res) => {
     };
     const ticket = await ticketService.generateTicket(data);
 
-    // todo: redireccionar a la pagina de ticket en los views
     res.status(201).json(ticket);
   } catch (error) {
     logger.error(error.message);
@@ -266,6 +273,52 @@ const getTicketFromEmail = async (req, res) => {
     res.status(500).json({ error: "Server internal error" });
   }
 };
+
+// Cart
+const addProductToCart = async (req, res) => {
+  try {
+    const { user } = verifyToken(req.cookies.token);
+    
+    const cart = await cartService.getCartById(user.cart);
+   
+    const product = await productServices.getProductById(req.params.pid);
+    await cartService.addProductToCart(cart._id, req.params.pid);
+    const newCart = await cartService.getCartById(user.cart);
+ 
+    res.status(200).render("cart", { total: newCart.total, products: newCart.products, cartId: newCart._id });
+  } catch (error) {
+    logger.error(error.message);
+    res.status(500).json({ error: "Server internal error" });
+  }
+};
+
+const buyCart = async (req, res) => {
+  try {
+    const { user } = verifyToken(req.cookies.token);
+    const cart = await cartService.getCartById(user.cart);
+
+    const data = {
+      purchaser: user.email,
+      amount: cart.total,
+    };
+    const ticket = await ticketService.generateTicket(data);
+    await cartService.removeAllProductsFromCart(cart);
+    res.status(200).render("ticket", { ticket });
+  } catch (error) {
+    logger.error(error.message);
+    res.status(500).json({ error: "Server internal error" });
+  }
+};
+
+const adminUsers = async (req, res) => {
+  try {
+    const users = await userServices.getAllUsers();
+    res.render("adminUsers", { users });
+  } catch (error) {
+    logger.error(error.message);
+    res.status(500).json({ error: "Server internal error" });
+  }
+}
 
 export {
   home,
@@ -286,4 +339,7 @@ export {
   getTicketFromEmail,
   changePassword,
   viewChangePassword,
+  addProductToCart,
+  buyCart,
+  adminUsers
 };
