@@ -1,15 +1,32 @@
-import { expect } from 'chai';
-import supertest from 'supertest';
-import app from '../src/app.js';
+import { expect } from "chai";
+import supertest from "supertest";
 
-const request = supertest(app);
 
-describe('Pruebas para el enrutador de usuarios', () => {
-  it('Debería obtener todos los usuarios', async () => {
-    const res = await request.get('/users');
-    expect(res.status).to.equal(200);
-    expect(res.body).to.deep.equal({ message: 'Obtener todos los usuarios' });
+const api = supertest("http://localhost:8080");
+
+describe("Test users", () => {
+ 
+
+  it("Get users", async () => {
+    const response = await api.get("/api/users");
+    expect(response.status).to.eql(200);
+    expect(response.body).to.be.an("array");
+    expect(response.body[0]).have.property("first_name");
   });
 
-  // Puedes agregar más pruebas para otras rutas y casos
+  it("get user by id", async () => {
+   
+    const response = await api.get("/api/users/65a0df358e60d15eb2f4b631");
+    expect(response.status).to.eql(200);
+    expect(response.body).to.be.an("object");
+    expect(response.body).have.property("first_name");
+  
+  });
+
+  it("Change user role", async () => {
+    const response = await api.get("/api/users/premium/65a0df358e60d15eb2f4b631");
+    expect(response.status).to.eql(200);
+    expect(response.body).to.be.an("object");
+    expect(response.body).have.property("newRole");
+  });
 });

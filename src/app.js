@@ -8,16 +8,11 @@ import { Server } from "socket.io";
 import config from "./config/config.js";
 import { mongoDBConnection } from "./config/mongoDB.config.js";
 import { initializePassport } from "./config/passport.config.js";
-import { routerCarts } from "./routes/carts.routes.js";
-import { routerProducts } from "./routes/products.routes.js";
-import { routerSessions } from "./routes/sessions.routes.js";
+import { apiRoutes } from "./routes/api.routes.js";
 import { routerViews } from "./routes/views.routes.js";
 import * as messageServices from "./services/message.services.js";
 import * as productServices from "./services/product.services.js";
 import { logger } from "./utils/logger.js";
-import { routerTest } from "./routes/test.routes.js";
-import { routerUsers } from "./routes/users.routes.js";
-import { __dirname } from "./utils/utils.js";
 
 // Datos de configuración del servidor
 const { PORT, COOKIE_SECRET } = config;
@@ -44,6 +39,7 @@ mongoDBConnection();
 app.use(express.static("public"));
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser(COOKIE_SECRET));
 
@@ -53,7 +49,6 @@ initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(express.urlencoded({ extended: true }));
 
 // Configuramos la documentación de la API
 import swaggerJSDoc from "swagger-jsdoc";
@@ -74,11 +69,7 @@ const specs = swaggerJSDoc(swaggerOptions);
 
 app.use("/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
-app.use("/api/products", routerProducts);
-app.use("/api/carts", routerCarts);
-app.use("/api/sessions", routerSessions);
-app.use("/api/users", routerUsers);
-app.use("/api/test", routerTest);
+app.use("/api", apiRoutes);
 app.use("/", routerViews);
 app.get("*", (req, res) => {
   res.status(404).send({ error: "Página no encontrada" });
@@ -119,5 +110,3 @@ socketServer.on("connection", async (socket) => {
     socketServer.emit("messages", messages);
   });
 });
-
-export default app;

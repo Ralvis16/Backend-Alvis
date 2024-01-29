@@ -1,15 +1,38 @@
-import { expect } from 'chai';
-import supertest from 'supertest';
-import app from '../src/app.js';
+import * as productDao from "../src/dao/mongo/product.dao.js";
+import mongoose from "mongoose";
+import { expect } from "chai";
 
-const request = supertest(app);
+mongoose.connect("mongodb://localhost:27017/tutoria-test");
 
-describe('Pruebas para el enrutador de productos', () => {
-  it('Debería obtener todos los productos', async () => {
-    const res = await request.get('/products');
-    expect(res.status).to.equal(200);
-    expect(res.body).to.deep.equal({ message: 'Obtener todos los productos' });
+describe("Test Products", () => {
+  beforeEach(function () {
+    this.timeout(5000);
   });
 
-  // Puedes agregar más pruebas para otras rutas y casos
+  it("Create new product", async function () {
+    const product = {
+      name: "test",
+      price: 100,
+      stock: 10,
+    };
+    const result = await productDao.addProduct(product);
+    expect(result).to.be.an("object");
+  });
+
+  it("Get all products", async function () {
+    const result = await productDao.getAllProducts();
+    
+    expect(result).to.have.property("docs").to.be.an("array");
+  });
+
+  it("Get product by id", async function () {
+    const product = {
+      name: "test",
+      price: 100,
+      stock: 10,
+    };
+    const newProduct = await productDao.addProduct(product);
+    const result = await productDao.getProductById(newProduct._id);
+    expect(result).to.be.an("object");
+  });
 });
