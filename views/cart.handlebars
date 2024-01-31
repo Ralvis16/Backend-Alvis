@@ -1,11 +1,12 @@
+{{!-- navBar --}}
+<nav style="background-color: #2A363B; color: #FFFFFF; padding: 10px;">
+    <!-- Contenido de la barra de navegación aquí -->
+</nav>
 
-{{> navBar}}
-<h3>Carrito</h3>
-
+<h3 style="color: #FF5733;">Carrito</h3>
 
 {{!-- Hacemos una tabla con los productos agregados al carrito --}}
-
-<table class="table table-striped">
+<table class="table table-striped" style="color: #FFFFFF;">
     <thead>
         <tr>
             <th>Producto</th>
@@ -32,8 +33,9 @@
         <tr>
             <td colspan="4">
                 <form action="/cart/buy/{{cartId}}" method="post">
-                    <input type="submit" value="Finalizar Compra">
+                    <input type="submit" value="Finalizar Compra" style="background-color: #FF5733; color: #FFFFFF; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">
                 </form>
             </td>
         </tr>
     </tfoot>
+</table>

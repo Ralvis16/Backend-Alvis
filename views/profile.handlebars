@@ -1,12 +1,58 @@
 {{! Mostramos los datos del usuario logueado }}
-{{> navBar}}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datos del Usuario Logueado</title>
+    <style>
+        body {
+            background-color: #2A363B; /* Fondo: Azul oscuro */
+            color: #FFFFFF; /* Texto principal: Blanco */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-<div class="container">
-  <p>Nombre: {{user.first_name}} {{user.last_name}}</p>
-  <p>Email: {{user.email}}</p>
-  <p>Rol: {{user.role}}</p>
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra */
+        }
 
-  <form action="/logout" method="get">
-    <input type="submit" class="btn btn-danger" value="Log Out" />
-  </form>
-</div>
+        p {
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #FF5733; /* Acento: Naranja rojizo */
+            color: #FFFFFF; /* Texto principal: Blanco */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #F7B32B; /* Resaltado: Amarillo */
+        }
+    </style>
+</head>
+<body>
+    {{> navBar}}
+
+    <div class="container">
+        <p>Nombre: {{user.first_name}} {{user.last_name}}</p>
+        <p>Email: {{user.email}}</p>
+        <p>Rol: {{user.role}}</p>
+
+        <form action="/logout" method="get">
+            <input type="submit" class="btn" value="Log Out" />
+        </form>
+    </div>
+</body>
+</html>

@@ -1,9 +1,63 @@
-{{> navBar}}
-<div class="container mt-5 ">
-  <p>Título: {{title}}</p>
-  <p>Descripción: {{description}}</p>
-  <p>Precio: {{price}}</p>
-  <form action="/cart/{{_id}}" method="post">
-    <input type="submit" value="Comprar">
-  </form>
-</div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: #2A363B; /* Fondo: Azul oscuro */
+            color: #FFFFFF; /* Texto principal: Blanco */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra */
+        }
+
+        .mt-5 {
+            margin-top: 50px;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        form {
+            display: inline-block;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #FF5733; /* Acento: Naranja rojizo */
+            color: #FFFFFF; /* Texto principal: Blanco */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #F7B32B; /* Resaltado: Amarillo */
+        }
+    </style>
+</head>
+<body>
+    {{> navBar}}
+    <div class="container mt-5">
+        <p>Título: {{title}}</p>
+        <p>Descripción: {{description}}</p>
+        <p>Precio: {{price}}</p>
+        <form action="/cart/{{_id}}" method="post">
+            <input type="submit" value="Comprar">
+        </form>
+    </div>
+</body>
+</html>

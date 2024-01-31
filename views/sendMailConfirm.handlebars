@@ -1,6 +1,54 @@
-<div>
-  <h3>Se envió un mail de recuperación a {{email}}</h3>
-  <p>Por favor, revisa tu casilla de correo.</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperación de contraseña</title>
+    <style>
+        body {
+            background-color: #2A363B; /* Fondo: Azul oscuro */
+            color: #FFFFFF; /* Texto principal: Blanco */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-  <a href="/login">Volver al login</a>
+        div {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra */
+            text-align: center;
+        }
+
+        h3 {
+            color: #FF5733; /* Acento: Naranja rojizo */
+        }
+
+        p {
+            margin-top: 10px;
+        }
+
+        a {
+            color: #FF5733; /* Acento: Naranja rojizo */
+            text-decoration: none;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <h3>Se envió un mail de recuperación a {{email}}</h3>
+    <p>Por favor, revisa tu casilla de correo.</p>
+
+    <a href="/login">Volver al login</a>
 </div>
+</body>
+</html>

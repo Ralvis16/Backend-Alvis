@@ -1,24 +1,69 @@
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
-  </head>
-  <body>
+    <style>
+        body {
+            background-color: #2A363B; /* Fondo: Azul oscuro */
+            color: #FFFFFF; /* Texto principal: Blanco */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
+        label {
+            color: #FF5733; /* Acento: Naranja rojizo */
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #FFFFFF; /* Texto principal: Blanco */
+            background-color: transparent;
+            color: #FFFFFF; /* Texto principal: Blanco */
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #FF5733; /* Acento: Naranja rojizo */
+            color: #FFFFFF; /* Texto principal: Blanco */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #F7B32B; /* Resaltado: Amarillo */
+        }
+
+        #chatMessages {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra */
+        }
+    </style>
+</head>
+<body>
     <form id="chatForm" class="m-3 col-3">
-      <label>Correo electronico</label>
-      <input class="form-control" id="user" name="user" type="text" />
-      <label>Mensaje</label>
-      <textarea class="form-control" id="message" name="message" type="text"> </textarea>
-      <input class="btn btn-primary mt-2" id="btn" type="submit" value="Enviar" />
+        <label for="user">Correo electrónico</label>
+        <input class="form-control" id="user" name="user" type="text" />
+        <label for="message">Mensaje</label>
+        <textarea class="form-control" id="message" name="message" type="text"></textarea>
+        <input class="btn btn-primary mt-2" id="btn" type="submit" value="Enviar" />
     </form>
 
     <h4>Mensajes de chat</h4>
-    <div id="chatMessages">
+    <div id="chatMessages"></div>
 
-    </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/chat.js"></script>
-  </body>
+</body>
 </html>

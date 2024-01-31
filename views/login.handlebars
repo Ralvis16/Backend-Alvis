@@ -1,31 +1,98 @@
-{{! Formulario de login }}
-<div class="container">
-  <h2>Login</h2>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Login</title>
+    <style>
+        body {
+            background-color: #2A363B; /* Fondo: Azul oscuro */
+            color: #FFFFFF; /* Texto principal: Blanco */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-  <form action="/login" method="POST">
-    <div>
-      <label for="email">Correo electronico</label>
-      <input type="email" name="email" id="email" placeholder="Email" required />
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra */
+        }
+
+        h2 {
+            color: #FF5733; /* Acento: Naranja rojizo */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #F7B32B; /* Resaltado: Amarillo */
+            color: #2A363B; /* Texto oscuro para resaltar */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        button:focus {
+            outline: none;
+        }
+
+        button:hover {
+            background-color: #FF5733; /* Acento: Naranja rojizo */
+        }
+
+        a {
+            color: #FF5733; /* Acento: Naranja rojizo */
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+
+        <form action="/login" method="POST">
+            <div>
+                <label for="email">Correo electrónico</label>
+                <input type="email" name="email" id="email" placeholder="Email" required />
+            </div>
+            <div>
+                <label for="password">Contraseña</label>
+                <input type="password" name="password" id="password" placeholder="Password" required />
+            </div>
+            <button type="submit">Login</button>
+        </form>
+
+        <form action="/api/sessions/github" method="get">
+            <button type="submit">Iniciar con GitHub</button>
+        </form>
+
+        {{! Si hay un error en el login mostramos el mensaje que nos envía el servidor }}
+        {{#if error}}
+            <p>{{error}}</p>
+        {{/if}}
+
+        <p>Restaurar contraseña <span><a href="/resetpassword">aquí</a></span></p>
+
+        <p>¿No tienes cuenta? <a href="/register">Regístrate</a></p>
     </div>
-    <div>
-      <label for="password">Contraseña</label>
-      <input type="password" name="password" id="password" placeholder="Password" required />
-    </div>
-    <button type="submit">Login</button>
-  </form>
-  <form action="/api/sessions/github" method="get">
-    <button type="submit">Iniciar con GitHub</button>
-  </form>
-
-  {{! Si hay un error en el login mostramos el mensaje que nos envía el servidor }}
-  {{#if error}}
-    <p>{{error}}</p>
-  {{/if}}
-
-  <p>Restaurar contraseña <span><a href="/resetpassword">aquí</a></span></p>
-  
-
-  <p>¿No tienes cuenta?</p>
-  <a href="/register">Regístrate</a>
-
-</div>
+</body>
+</html>
